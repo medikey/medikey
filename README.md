@@ -1,6 +1,3 @@
-<<<<<<< HEAD
-# medikey-test
-=======
 # MediKey - Decentralized Healthcare Records
 
 MediKey is a decentralized healthcare records management system built on the Nostr protocol and Bitcoin Lightning Network. It enables patients to control their medical data while allowing secure, permissioned access for healthcare providers.
@@ -271,6 +268,3 @@ For security concerns or vulnerabilities, please email security@medikey.app (not
 ---
 
 **Built with ❤️ for healthcare privacy and patient empowerment**
-
-*Vibed with [MKStack](https://soapbox.pub/mkstack)*
->>>>>>> 9be72d9 (feat: Complete Nostr protocol integration and UI fixes)

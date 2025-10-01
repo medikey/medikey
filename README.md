@@ -261,10 +261,6 @@ MIT License - see LICENSE file for details.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## Security
-
-For security concerns or vulnerabilities, please email security@medikey.app (not implemented in MVP).
-
 ---
 
 **Built with ❤️ for healthcare privacy and patient empowerment**

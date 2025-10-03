@@ -24,10 +24,10 @@ export function LandingPage() {
         <div className="container mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <Heart className="w-5 h-5 text-primary-foreground" />
+              <div className="w-100 h-50">
+                <img src="/medikey-logo.png" alt="MediKey Logo" className="w-40 h-20" />
               </div>
-              <span className="text-xl font-bold">MediKey</span>
+              {/* <span className="text-xl font-bold">MediKey</span> */}
             </div>
             <div className="hidden md:flex items-center space-x-8">
               <a href="#problem" className="text-muted-foreground hover:text-foreground transition-colors">
@@ -120,7 +120,7 @@ export function LandingPage() {
       <ScrollingTicker />
 
       {/* Testimonials Section */}
-       <TestimonialsSection />
+       {/* <TestimonialsSection /> */}
 
       {/* Vision Section */}
       

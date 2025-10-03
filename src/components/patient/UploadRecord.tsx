@@ -9,7 +9,8 @@ import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
 import { useMediKey, generateId } from '@/contexts/MediKeyContext';
 import { usePublishHealthRecord } from '@/hooks/useMediKeyNostr';
-import { Upload, FileText, Image, File, CheckCircle, Zap, Globe } from 'lucide-react';
+import { Upload, Image, File, CheckCircle, Globe } from 'lucide-react';
+import { LightningIcon, RecordIcon } from '@/components/icons/BitcoinIcons';
 import { useToast } from '@/hooks/useToast';
 import type { HealthRecord } from '@/types/medikey';
 
@@ -160,7 +161,7 @@ export function UploadRecord() {
 
   const getFileIcon = (type: string) => {
     if (type.startsWith('image/')) return <Image className="h-8 w-8" />;
-    if (type.includes('json') || type.includes('csv')) return <FileText className="h-8 w-8" />;
+    if (type.includes('json') || type.includes('csv')) return <RecordIcon className="h-8 w-8" size={32} />;
     return <File className="h-8 w-8" />;
   };
 
@@ -300,7 +301,7 @@ export function UploadRecord() {
 
           {/* Success State */}
           {uploadComplete && (
-            <div className="flex items-center space-x-2 text-green-600">
+            <div className="flex items-center space-x-2 text-accent">
               <CheckCircle className="h-5 w-5" />
               <span className="font-medium">Upload completed successfully!</span>
             </div>
@@ -323,7 +324,7 @@ export function UploadRecord() {
               disabled={isUploading}
               className="flex items-center space-x-2 h-12 px-6 rounded-xl border-border/50"
             >
-              <Zap className="h-4 w-4" />
+              <LightningIcon className="h-4 w-4" size={16} />
               <span>Request Verification</span>
             </Button>
           </div>

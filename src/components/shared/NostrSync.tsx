@@ -2,7 +2,8 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useSyncWithNostr } from '@/hooks/useMediKeyNostr';
-import { Globe, RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { RefreshCw, Wifi, WifiOff } from 'lucide-react';
+import { NetworkIcon } from '@/components/icons/BitcoinIcons';
 import { useToast } from '@/hooks/useToast';
 import { useState, useEffect } from 'react';
 
@@ -50,14 +51,14 @@ export function NostrSync() {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="p-2 bg-blue-100 rounded-lg">
-              <Globe className="h-4 w-4 text-blue-600" />
+              <NetworkIcon className="h-4 w-4 text-blue-600" size={16} />
             </div>
             <div>
               <div className="flex items-center space-x-2 mb-1">
                 <h4 className="font-medium text-sm">Nostr Network</h4>
-                <Badge 
-                  variant={isOnline ? "default" : "secondary"} 
-                  className={`text-xs ${isOnline ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}
+                <Badge
+                  variant={isOnline ? "default" : "secondary"}
+                  className={`text-xs ${isOnline ? 'bg-accent/20 text-accent-foreground' : 'bg-gray-100 text-gray-800'}`}
                 >
                   {isOnline ? (
                     <>
@@ -73,14 +74,14 @@ export function NostrSync() {
                 </Badge>
               </div>
               <p className="text-xs text-muted-foreground">
-                {lastSync 
+                {lastSync
                   ? `Last sync: ${lastSync.toLocaleTimeString()}`
                   : 'Not synced yet'
                 }
               </p>
             </div>
           </div>
-          
+
           <Button
             variant="outline"
             size="sm"

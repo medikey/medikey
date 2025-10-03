@@ -1,12 +1,12 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { useMediKey } from '@/contexts/MediKeyContext';
-import { 
-  Clock, 
-  Upload, 
-  Share2, 
-  UserX, 
-  Zap, 
+import {
+  Clock,
+  Upload,
+  Share2,
+  UserX,
+  Zap,
   Search,
   FileText,
   Activity
@@ -35,7 +35,7 @@ export function ActivityHistory() {
   const getActivityColor = (action: ActivityLog['action']) => {
     switch (action) {
       case 'upload': return 'bg-blue-100 text-blue-800';
-      case 'share': return 'bg-green-100 text-green-800';
+      case 'share': return 'bg-accent/20 text-accent-foreground';
       case 'revoke': return 'bg-red-100 text-red-800';
       case 'payment': return 'bg-purple-100 text-purple-800';
       case 'access_request': return 'bg-orange-100 text-orange-800';
@@ -90,7 +90,7 @@ export function ActivityHistory() {
                       {getActivityIcon(activity.action)}
                     </div>
                   </div>
-                  
+
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center space-x-3 mb-1">
                       <Badge className={getActivityColor(activity.action)}>
@@ -100,11 +100,11 @@ export function ActivityHistory() {
                         {format(activity.timestamp, 'MMM d, yyyy • h:mm a')}
                       </span>
                     </div>
-                    
+
                     <p className="text-sm font-medium text-foreground">
                       {activity.description}
                     </p>
-                    
+
                     {activity.metadata && (
                       <div className="mt-2 text-xs text-muted-foreground">
                         {activity.metadata.recordId && (

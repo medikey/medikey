@@ -8,17 +8,16 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Progress } from '@/components/ui/progress';
 import { useMediKey, generateId, generateLightningInvoice } from '@/contexts/MediKeyContext';
 import { useToast } from '@/hooks/useToast';
-import { 
-  Zap, 
-  Copy, 
-  CheckCircle, 
-  Clock, 
-  XCircle, 
+import {
+  Copy,
+  CheckCircle,
+  Clock,
+  XCircle,
   QrCode,
   CreditCard,
-  Wallet,
   ArrowUpRight
 } from 'lucide-react';
+import { LightningIcon, WalletIcon } from '@/components/icons/BitcoinIcons';
 import { format } from 'date-fns';
 import type { LightningPayment } from '@/types/medikey';
 
@@ -29,15 +28,15 @@ interface LightningPaymentProps {
   onSuccess?: (payment: LightningPayment) => void;
 }
 
-export function LightningPaymentComponent({ 
-  trigger, 
-  amount = 1000, 
-  description = "Record verification", 
-  onSuccess 
+export function LightningPaymentComponent({
+  trigger,
+  amount = 1000,
+  description = "Record verification",
+  onSuccess
 }: LightningPaymentProps) {
   const { state, dispatch } = useMediKey();
   const { toast } = useToast();
-  
+
   const [isOpen, setIsOpen] = useState(false);
   const [customAmount, setCustomAmount] = useState(amount.toString());
   const [isGenerating, setIsGenerating] = useState(false);
@@ -53,7 +52,7 @@ export function LightningPaymentComponent({
 
     try {
       const invoice = generateLightningInvoice(Number(customAmount));
-      
+
       const payment: LightningPayment = {
         id: generateId(),
         userId: state.currentUser.publicKey,
@@ -103,7 +102,7 @@ export function LightningPaymentComponent({
 
       // Simulate payment completion
       await new Promise(resolve => setTimeout(resolve, 3000));
-      
+
       clearInterval(progressInterval);
       setPaymentProgress(100);
 
@@ -187,7 +186,7 @@ export function LightningPaymentComponent({
 
   const getStatusIcon = (status: LightningPayment['status']) => {
     switch (status) {
-      case 'paid': return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'paid': return <CheckCircle className="h-4 w-4 text-accent" />;
       case 'failed': return <XCircle className="h-4 w-4 text-red-600" />;
       default: return <Clock className="h-4 w-4 text-orange-600" />;
     }
@@ -195,7 +194,7 @@ export function LightningPaymentComponent({
 
   const getStatusColor = (status: LightningPayment['status']) => {
     switch (status) {
-      case 'paid': return 'bg-green-100 text-green-800';
+      case 'paid': return 'bg-accent/20 text-accent-foreground';
       case 'failed': return 'bg-red-100 text-red-800';
       default: return 'bg-orange-100 text-orange-800';
     }
@@ -206,7 +205,7 @@ export function LightningPaymentComponent({
       <DialogTrigger asChild>
         {trigger || (
           <Button className="flex items-center space-x-2">
-            <Zap className="h-4 w-4" />
+            <LightningIcon className="h-4 w-4" size={16} />
             <span>Lightning Payment</span>
           </Button>
         )}
@@ -214,7 +213,7 @@ export function LightningPaymentComponent({
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center space-x-2">
-            <Zap className="h-5 w-5 text-orange-500" />
+            <LightningIcon className="h-5 w-5 text-orange-500" size={20} />
             <span>Lightning Payment</span>
           </DialogTitle>
           <DialogDescription>
@@ -304,11 +303,11 @@ export function LightningPaymentComponent({
                   disabled={isProcessing || currentPayment.status === 'paid'}
                   className="flex-1"
                 >
-                  <Wallet className="h-4 w-4 mr-2" />
-                  {isProcessing ? 'Processing...' : 
+                  <WalletIcon className="h-4 w-4 mr-2" size={16} />
+                  {isProcessing ? 'Processing...' :
                    currentPayment.status === 'paid' ? 'Paid!' : 'Pay Invoice'}
                 </Button>
-                
+
                 <Button
                   variant="outline"
                   onClick={() => window.open(`lightning:${currentPayment.invoice}`, '_blank')}
@@ -339,7 +338,7 @@ export function PaymentHistory() {
 
   const getStatusIcon = (status: LightningPayment['status']) => {
     switch (status) {
-      case 'paid': return <CheckCircle className="h-4 w-4 text-green-600" />;
+      case 'paid': return <CheckCircle className="h-4 w-4 text-accent" />;
       case 'failed': return <XCircle className="h-4 w-4 text-red-600" />;
       default: return <Clock className="h-4 w-4 text-orange-600" />;
     }
@@ -347,7 +346,7 @@ export function PaymentHistory() {
 
   const getStatusColor = (status: LightningPayment['status']) => {
     switch (status) {
-      case 'paid': return 'bg-green-100 text-green-800';
+      case 'paid': return 'bg-accent/20 text-accent-foreground';
       case 'failed': return 'bg-red-100 text-red-800';
       default: return 'bg-orange-100 text-orange-800';
     }
@@ -357,7 +356,7 @@ export function PaymentHistory() {
     <Card>
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
-          <CreditCard className="h-5 w-5" />
+          <WalletIcon className="h-5 w-5" size={20} />
           <span>Payment History</span>
         </CardTitle>
         <CardDescription>
@@ -367,7 +366,7 @@ export function PaymentHistory() {
       <CardContent>
         {userPayments.length === 0 ? (
           <div className="text-center py-8">
-            <Wallet className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
+            <WalletIcon className="h-8 w-8 text-muted-foreground mx-auto mb-2" size={32} />
             <p className="text-muted-foreground">
               No payments yet. Make your first Lightning transaction.
             </p>
@@ -390,7 +389,7 @@ export function PaymentHistory() {
                     </p>
                   </div>
                 </div>
-                
+
                 <Badge className={getStatusColor(payment.status)}>
                   {payment.status}
                 </Badge>

@@ -2,17 +2,20 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
-  Shield,
-  FileText,
-  Share2,
-  BarChart3,
   LogOut,
   Menu,
   X,
-  UserCheck,
-  Search,
-  Settings
+  Search
 } from 'lucide-react';
+import {
+  MediKeyLogo,
+  SecureIcon,
+  RecordIcon,
+  ShareIcon,
+  AnalyticsIcon,
+  UserIcon,
+  SettingsIcon
+} from '@/components/icons/BitcoinIcons';
 import { useMediKey } from '@/contexts/MediKeyContext';
 import { cn } from '@/lib/utils';
 
@@ -30,21 +33,21 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
   };
 
   const patientMenuItems = [
-    { id: 'profile', label: 'Profile', icon: Shield },
-    { id: 'upload', label: 'Upload Records', icon: FileText },
-    { id: 'records', label: 'My Records', icon: FileText },
-    { id: 'share', label: 'Share Access', icon: Share2 },
-    { id: 'history', label: 'History', icon: BarChart3 },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'profile', label: 'Profile', icon: SecureIcon },
+    { id: 'upload', label: 'Upload Records', icon: RecordIcon },
+    { id: 'records', label: 'My Records', icon: RecordIcon },
+    { id: 'share', label: 'Share Access', icon: ShareIcon },
+    { id: 'history', label: 'History', icon: AnalyticsIcon },
+    { id: 'analytics', label: 'Analytics', icon: AnalyticsIcon },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   const clinicianMenuItems = [
-    { id: 'profile', label: 'Profile', icon: Shield },
+    { id: 'profile', label: 'Profile', icon: UserIcon },
     { id: 'request', label: 'Request Access', icon: Search },
-    { id: 'records', label: 'Patient Records', icon: FileText },
-    { id: 'analytics', label: 'Analytics', icon: BarChart3 },
-    { id: 'settings', label: 'Settings', icon: Settings },
+    { id: 'records', label: 'Patient Records', icon: RecordIcon },
+    { id: 'analytics', label: 'Analytics', icon: AnalyticsIcon },
+    { id: 'settings', label: 'Settings', icon: SettingsIcon },
   ];
 
   const menuItems = state.currentUser?.role === 'patient' ? patientMenuItems : clinicianMenuItems;
@@ -55,7 +58,7 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
         <div className="relative">
           <div className="absolute inset-0 bg-primary/20 rounded-xl blur-lg"></div>
           <div className="relative p-3 bg-primary rounded-xl">
-            <Shield className="h-7 w-7 text-primary-foreground" />
+            <MediKeyLogo size={28} className="text-primary-foreground" />
           </div>
         </div>
         <div>
@@ -66,7 +69,7 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
         </div>
       </div>
 
-      <div className="space-y-2 flex-1">
+      <div className="space-y-2 flex-1 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const isActive = currentView === item.id;
@@ -78,26 +81,26 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
                 'w-full justify-start h-12 rounded-xl transition-all duration-200 font-medium',
                 isActive
                   ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/25'
-                  : 'hover:bg-muted/50'
+                  : 'hover:bg-accent/80 hover:text-accent-foreground'
               )}
               onClick={() => {
                 onViewChange(item.id);
                 setIsMobileMenuOpen(false);
               }}
             >
-              <Icon className="h-5 w-5 mr-3" />
+              <Icon className="h-5 w-5 mr-3" size={20} />
               {item.label}
             </Button>
           );
         })}
       </div>
 
-      <div className="border-t border-border/50 pt-6 space-y-4 mt-auto">
+      <div className="border-t border-border/50 pt-6 space-y-4 mt-auto flex-shrink-0">
         <div className="p-4 bg-muted/30 rounded-2xl border border-border/50">
           {state.currentUser?.name && (
             <>
               <p className="text-xs font-medium text-muted-foreground mb-1">Account</p>
-              <p className="text-sm font-bold mb-3">{state.currentUser.name}</p>
+              <p className="text-sm font-bold mb-3 truncate">{state.currentUser.name}</p>
             </>
           )}
           <p className="text-xs font-medium text-muted-foreground mb-2">Your Key ID</p>
@@ -109,14 +112,16 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
           </Badge>
         </div>
 
-        <Button
-          variant="outline"
-          className="w-full h-11 rounded-xl border-border/50 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
-          onClick={handleLogout}
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          Logout
-        </Button>
+        <div className="pb-6">
+          <Button
+            variant="outline"
+            className="w-full h-11 rounded-xl border-border/50 hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors"
+            onClick={handleLogout}
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
+        </div>
       </div>
     </>
   );
@@ -147,7 +152,7 @@ export function Navigation({ currentView, onViewChange }: NavigationProps) {
         'lg:transform-none',
         isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
       )}>
-        <div className="flex flex-col h-full p-8 pb-6">
+        <div className="flex flex-col h-full p-8">
           <NavContent />
         </div>
       </div>

@@ -12,7 +12,7 @@ export function ClinicianSettings() {
 
   const handleRegenerateKeys = () => {
     const { publicKey, privateKey } = generateKeyPair();
-    
+
     dispatch({
       type: 'SET_USER',
       payload: {
@@ -51,7 +51,7 @@ export function ClinicianSettings() {
   const handleExportData = () => {
     const dataToExport = {
       user: state.currentUser,
-      accessibleRecords: state.records.filter(r => 
+      accessibleRecords: state.records.filter(r =>
         state.accessGrants.some(g => g.recordId === r.id && g.clinicianId === state.currentUser?.publicKey && g.isActive)
       ),
       accessGrants: state.accessGrants.filter(g => g.clinicianId === state.currentUser?.publicKey),
@@ -135,8 +135,8 @@ export function ClinicianSettings() {
       <div className="crypto-card rounded-3xl p-8">
         <div className="mb-6">
           <div className="flex items-center space-x-3 mb-2">
-            <div className="p-2 bg-green-100 rounded-xl">
-              <Download className="h-5 w-5 text-green-600" />
+            <div className="p-2 bg-accent/20 rounded-xl">
+              <Download className="h-5 w-5 text-accent" />
             </div>
             <h3 className="text-xl font-bold">Practice Data Management</h3>
           </div>

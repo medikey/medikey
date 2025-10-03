@@ -6,12 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { useMediKey } from '@/contexts/MediKeyContext';
-import { 
-  FileText, 
-  Image, 
-  File, 
-  Search, 
-  Filter, 
+import {
+  FileText,
+  Image,
+  File,
+  Search,
+  Filter,
   Calendar,
   Share2,
   CheckCircle,
@@ -28,7 +28,7 @@ export function RecordList() {
   const [filterType, setFilterType] = useState<string>('all');
   const [selectedRecord, setSelectedRecord] = useState<HealthRecord | null>(null);
 
-  const userRecords = state.records.filter(record => 
+  const userRecords = state.records.filter(record =>
     record.patientId === state.currentUser?.publicKey
   );
 
@@ -47,7 +47,7 @@ export function RecordList() {
 
   const getTypeColor = (type: HealthRecord['type']) => {
     switch (type) {
-      case 'immunization': return 'bg-green-100 text-green-800';
+      case 'immunization': return 'bg-accent/20 text-accent-foreground';
       case 'lab_result': return 'bg-blue-100 text-blue-800';
       case 'prescription': return 'bg-purple-100 text-purple-800';
       default: return 'bg-gray-100 text-gray-800';
@@ -123,7 +123,7 @@ export function RecordList() {
             <FileText className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
             <h3 className="text-lg font-medium mb-2">No records found</h3>
             <p className="text-muted-foreground">
-              {searchTerm || filterType !== 'all' 
+              {searchTerm || filterType !== 'all'
                 ? 'Try adjusting your search or filter criteria'
                 : 'Start by uploading your first health record'
               }
@@ -144,7 +144,7 @@ export function RecordList() {
                     <div className="flex-shrink-0 p-2 bg-muted rounded-lg">
                       {getFileIcon(record.fileType)}
                     </div>
-                    
+
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -158,25 +158,25 @@ export function RecordList() {
                               {format(record.uploadDate, 'MMM d, yyyy')}
                             </div>
                           </div>
-                          
+
                           {record.metadata.description && (
                             <p className="text-sm text-muted-foreground mt-2 line-clamp-2">
                               {record.metadata.description}
                             </p>
                           )}
-                          
+
                           <div className="flex items-center space-x-4 mt-3">
                             <div className="flex items-center text-sm">
                               {record.verified ? (
-                                <CheckCircle className="h-4 w-4 text-green-600 mr-1" />
+                                <CheckCircle className="h-4 w-4 text-accent mr-1" />
                               ) : (
                                 <Clock className="h-4 w-4 text-orange-600 mr-1" />
                               )}
-                              <span className={record.verified ? 'text-green-600' : 'text-orange-600'}>
+                              <span className={record.verified ? 'text-accent' : 'text-orange-600'}>
                                 {record.verified ? 'Verified' : 'Pending'}
                               </span>
                             </div>
-                            
+
                             {sharedCount > 0 && (
                               <div className="flex items-center text-sm text-blue-600">
                                 <Share2 className="h-4 w-4 mr-1" />
@@ -185,12 +185,12 @@ export function RecordList() {
                             )}
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center space-x-2 ml-4">
                           <Dialog>
                             <DialogTrigger asChild>
-                              <Button 
-                                variant="outline" 
+                              <Button
+                                variant="outline"
                                 size="sm"
                                 onClick={() => setSelectedRecord(record)}
                               >
@@ -214,7 +214,7 @@ export function RecordList() {
                                   </div>
                                   <div>
                                     <span className="font-medium">Status:</span>{' '}
-                                    <span className={record.verified ? 'text-green-600' : 'text-orange-600'}>
+                                    <span className={record.verified ? 'text-accent' : 'text-orange-600'}>
                                       {record.verified ? 'Verified' : 'Pending'}
                                     </span>
                                   </div>
@@ -222,7 +222,7 @@ export function RecordList() {
                                     <span className="font-medium">Shared:</span> {sharedCount} time{sharedCount !== 1 ? 's' : ''}
                                   </div>
                                 </div>
-                                
+
                                 {record.metadata.description && (
                                   <div>
                                     <span className="font-medium text-sm">Description:</span>
@@ -231,7 +231,7 @@ export function RecordList() {
                                     </p>
                                   </div>
                                 )}
-                                
+
                                 {record.metadata.tags && record.metadata.tags.length > 0 && (
                                   <div>
                                     <span className="font-medium text-sm">Tags:</span>
@@ -247,9 +247,9 @@ export function RecordList() {
                               </div>
                             </DialogContent>
                           </Dialog>
-                          
-                          <Button 
-                            variant="outline" 
+
+                          <Button
+                            variant="outline"
                             size="sm"
                             onClick={() => downloadRecord(record)}
                           >

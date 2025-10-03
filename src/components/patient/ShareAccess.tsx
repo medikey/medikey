@@ -271,8 +271,8 @@ export function ShareAccess() {
                 <div key={grant.id} className="flex items-center justify-between p-4 border rounded-lg">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3">
-                      <div className="p-2 bg-green-100 rounded-lg">
-                        <CheckCircle className="h-4 w-4 text-green-600" />
+                      <div className="p-2 bg-accent/20 rounded-lg">
+                        <CheckCircle className="h-4 w-4 text-accent" />
                       </div>
                       <div>
                         <h4 className="font-medium">{getRecordTitle(grant.recordId)}</h4>

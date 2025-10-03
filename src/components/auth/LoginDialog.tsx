@@ -10,6 +10,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useLoginActions } from '@/hooks/useLoginActions';
 import { cn } from '@/lib/utils';
+import { useMediKey } from '@/contexts/MediKeyContext';
+import { useToast } from '@/hooks/useToast';
+import { UserRole } from '@/types/medikey';
 
 interface LoginDialogProps {
   isOpen: boolean;
@@ -26,7 +29,10 @@ const validateBunkerUri = (uri: string) => {
   return uri.startsWith('bunker://');
 };
 
+// Login State 
+
 const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onSignup }) => {
+
   const [isLoading, setIsLoading] = useState(false);
   const [isFileLoading, setIsFileLoading] = useState(false);
   const [nsec, setNsec] = useState('');
@@ -57,6 +63,11 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
   }, [isOpen]);
 
   const handleExtensionLogin = async () => {
+    const { dispatch } = useMediKey();
+
+    const [selectedRole, setSelectedRole] = useState<UserRole>('patient');
+    const [isGenerating, setIsGenerating] = useState(false);
+    
     setIsLoading(true);
     setErrors(prev => ({ ...prev, extension: undefined }));
 
@@ -79,9 +90,23 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
     } finally {
       setIsLoading(false);
     }
+
+     dispatch({
+      type: 'SET_USER',
+      payload: {
+        role: selectedRole,
+        publicKey: '',
+        privateKey: ''
+      }
+    });
   };
 
   const executeLogin = (key: string) => {
+    const { dispatch } = useMediKey();
+
+    const [selectedRole, setSelectedRole] = useState<UserRole>('patient');
+    const [isGenerating, setIsGenerating] = useState(false);
+
     setIsLoading(true);
     setErrors({});
 
@@ -96,9 +121,22 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
         setIsLoading(false);
       }
     }, 50);
+
+     dispatch({
+      type: 'SET_USER',
+      payload: {
+        role: selectedRole,
+        publicKey: '',
+        privateKey: ''
+      }
+    });
   };
 
   const handleKeyLogin = () => {
+    const { dispatch } = useMediKey();
+
+    const [selectedRole, setSelectedRole] = useState<UserRole>('patient');
+    const [isGenerating, setIsGenerating] = useState(false);
     if (!nsec.trim()) {
       setErrors(prev => ({ ...prev, nsec: 'Please enter your secret key' }));
       return;
@@ -109,9 +147,23 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
       return;
     }
     executeLogin(nsec);
+
+    dispatch({
+      type: 'SET_USER',
+      payload: {
+        role: selectedRole,
+        publicKey: '',
+        privateKey: ''
+      }
+    });
   };
 
   const handleBunkerLogin = async () => {
+    const { dispatch } = useMediKey();
+
+    const [selectedRole, setSelectedRole] = useState<UserRole>('patient');
+    const [isGenerating, setIsGenerating] = useState(false);
+
     if (!bunkerUri.trim()) {
       setErrors(prev => ({ ...prev, bunker: 'Please enter a bunker URI' }));
       return;
@@ -139,6 +191,15 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
     } finally {
       setIsLoading(false);
     }
+
+    dispatch({
+      type: 'SET_USER',
+      payload: {
+        role: selectedRole,
+        publicKey: '',
+        privateKey: ''
+      }
+    });
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,10 +240,28 @@ const LoginDialog: React.FC<LoginDialogProps> = ({ isOpen, onClose, onLogin, onS
 
   const defaultTab = 'nostr' in window ? 'extension' : 'key';
 
+  
+
+const handleLogin = () => {
+const { dispatch } = useMediKey();
+
+const [selectedRole, setSelectedRole] = useState<UserRole>('patient');
+const [isGenerating, setIsGenerating] = useState(false);
+
+    dispatch({
+      type: 'SET_USER',
+      payload: {
+        role: selectedRole,
+        publicKey: '',
+        privateKey: ''
+      }
+    });
+};
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className={cn("max-w-[95vw] sm:max-w-md max-h-[90vh] max-h-[90dvh] p-0 overflow-hidden rounded-2xl overflow-y-scroll")}
+        className={cn("max-w-[95vw] sm:max-w-md max-h-[90dvh] p-0 overflow-hidden rounded-2xl overflow-y-scroll")}
       >
         <DialogHeader className={cn('px-6 pt-6 pb-1 relative')}>
 

@@ -3,7 +3,8 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useMediKey } from '@/contexts/MediKeyContext';
 import { NostrSync } from '@/components/shared/NostrSync';
-import { Shield, Key, Copy, Check } from 'lucide-react';
+import { Copy, Check } from 'lucide-react';
+import { SecureIcon, KeyIcon } from '@/components/icons/BitcoinIcons';
 import { useToast } from '@/hooks/useToast';
 
 export function PatientProfile() {
@@ -51,8 +52,8 @@ export function PatientProfile() {
         <div className="crypto-card rounded-3xl p-8">
           <div className="mb-6">
             <div className="flex items-center space-x-3 mb-2">
-              <div className="p-2 bg-blue-100 rounded-xl">
-                <Shield className="h-5 w-5 text-blue-600" />
+              <div className="p-2 bg-amber-100 rounded-xl">
+                <SecureIcon className="h-5 w-5 text-amber-600" size={20} />
               </div>
               <h3 className="text-xl font-bold">Identity</h3>
             </div>
@@ -92,7 +93,7 @@ export function PatientProfile() {
             <div className="pt-4 border-t">
               <p className="text-sm font-medium mb-2">Security Status</p>
               <div className="flex items-center space-x-2">
-                <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                <div className="h-2 w-2 bg-accent rounded-full"></div>
                 <span className="text-sm text-muted-foreground">Keys Active</span>
               </div>
             </div>
@@ -103,8 +104,8 @@ export function PatientProfile() {
         <div className="crypto-card rounded-3xl p-8">
           <div className="mb-6">
             <div className="flex items-center space-x-3 mb-2">
-              <div className="p-2 bg-green-100 rounded-xl">
-                <Key className="h-5 w-5 text-green-600" />
+              <div className="p-2 bg-orange-100 rounded-xl">
+                <KeyIcon className="h-5 w-5 text-orange-600" size={20} />
               </div>
               <h3 className="text-xl font-bold">Key Management</h3>
             </div>
@@ -159,7 +160,7 @@ export function PatientProfile() {
             <div className="text-sm text-muted-foreground font-medium">Records</div>
           </div>
           <div className="text-center p-4 rounded-2xl bg-muted/30">
-            <div className="text-3xl font-bold text-green-600 mb-1">
+            <div className="text-3xl font-bold text-accent mb-1">
               {state.accessGrants.filter(g => g.isActive).length}
             </div>
             <div className="text-sm text-muted-foreground font-medium">Active Shares</div>

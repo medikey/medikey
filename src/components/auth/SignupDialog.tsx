@@ -2,7 +2,7 @@
 // It is important that all functionality in this file is preserved, and should only be modified if explicitly requested.
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Download, Key, UserPlus, FileText, Shield, User, Sparkles, LogIn, CheckCircle, Upload, Globe } from 'lucide-react';
+import { Download, Key, UserPlus, FileText, Shield, User, Sparkles, LogIn, CheckCircle, Upload, Globe, Copy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
@@ -14,6 +14,11 @@ import { useNostrPublish } from '@/hooks/useNostrPublish';
 import { useUploadFile } from '@/hooks/useUploadFile';
 import { generateSecretKey, nip19 } from 'nostr-tools';
 import { cn } from '@/lib/utils';
+import { UserRole } from '@/types/medikey';
+import { generateId, useMediKey } from '@/contexts/MediKeyContext';
+import { RadioGroup, RadioGroupItem } from '@radix-ui/react-radio-group';
+import { Label } from '@/components/ui/label';
+import { SecureIcon } from '../icons/BitcoinIcons';
 
 interface SignupDialogProps {
   isOpen: boolean;
@@ -40,6 +45,16 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
   const { mutateAsync: publishEvent, isPending: isPublishing } = useNostrPublish();
   const { mutateAsync: uploadFile, isPending: isUploading } = useUploadFile();
   const avatarFileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [newAccount, setNewAccount] = useState<{
+    role: UserRole;
+    name: string;
+  } | null>(null);
+  const [accountName, setAccountName] = useState('');
+  const [newAccountRole, setNewAccountRole] = useState<UserRole>('patient');
+  const [isCreating, setIsCreating] = useState(false);
+  const [copiedKey, setCopiedKey] = useState<'public' | 'private' | null>(null);
+
 
   // Generate a proper nsec key using nostr-tools
   const generateKey = () => {
@@ -57,9 +72,9 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
         setStep('download');
 
         toast({
-          title: 'Your Secret Key is Ready!',
-          description: 'A new secret key has been generated for you.',
-        });
+        title: 'Nostr Account Created!',
+        description: 'Your new healthcare identity has been generated successfully.',
+      });
       } catch {
         toast({
           title: 'Error',
@@ -110,7 +125,65 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
     }
   };
 
+const handleCreateAccount = async () => {
+    if (!accountName.trim()) return;
 
+    setIsCreating(true);
+
+    try {
+      // Simulate account creation process
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      const account = {
+        role: newAccountRole,
+        name: accountName.trim()
+      };
+
+      setNewAccount(account);
+
+      toast({
+        title: 'Nostr Account Created!',
+        description: 'Your new healthcare identity has been generated successfully.',
+      });
+
+    } catch (error) {
+      toast({
+        title: 'Account Creation Failed',
+        description: 'There was an error creating your account.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+const handleUseNewAccount = () => {
+    if (!newAccount) return;
+
+    const { dispatch } = useMediKey();
+
+    dispatch({
+      type: 'SET_USER',
+      payload: {
+        role: newAccount.role,
+        name: newAccount.name,
+        publicKey: '',
+        privateKey: '',
+      }
+    });
+
+    // Add welcome activity
+    dispatch({
+      type: 'ADD_ACTIVITY',
+      payload: {
+        id: generateId(),
+        userId: newAccount.name,
+        action: 'access_request',
+        description: `Created new ${newAccount.role} account: ${newAccount.name}`,
+        timestamp: new Date()
+      }
+    });
+  };
 
   const finishKeySetup = () => {
     try {
@@ -176,6 +249,11 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
     // Mark signup completion time for fallback welcome modal
     localStorage.setItem('signup_completed', Date.now().toString());
 
+    const { dispatch } = useMediKey();
+
+    const [selectedRole, setSelectedRole] = useState<UserRole>('patient');
+    const [isGenerating, setIsGenerating] = useState(false);
+
     try {
       // Publish profile if user provided information
       if (!skipProfile && (profileData.name || profileData.about || profileData.picture)) {
@@ -208,9 +286,9 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
         setTimeout(() => {
           onClose();
           toast({
-            title: 'Welcome!',
-            description: 'Your account is ready.',
-          });
+        title: 'Nostr Account Created!',
+        description: 'Your new healthcare identity has been generated successfully.',
+      });
         }, 3000);
       }
     } catch {
@@ -233,12 +311,21 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
         setTimeout(() => {
           onClose();
           toast({
-            title: 'Welcome!',
-            description: 'Your account is ready.',
-          });
+        title: 'Nostr Account Created!',
+        description: 'Your new healthcare identity has been generated successfully.',
+      });
         }, 3000);
       }
     }
+
+     dispatch({
+      type: 'SET_USER',
+      payload: {
+        role: selectedRole,
+        publicKey: '',
+        privateKey: ''
+      }
+    });
   };
 
   const getTitle = () => {
@@ -294,7 +381,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
-        className={cn("max-w-[95vw] sm:max-w-md max-h-[90vh] max-h-[90dvh] p-0 overflow-hidden rounded-2xl flex flex-col")}
+        className={cn("max-w-[95vw] sm:max-w-md max-h-[90dvh] p-0 overflow-hidden rounded-2xl flex flex-col")}
       >
         <DialogHeader className={cn('px-6 pt-6 pb-1 relative flex-shrink-0')}>
           <DialogTitle className={cn('font-semibold text-center text-lg')}>
@@ -593,36 +680,7 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
 
               {/* Profile form */}
               <div className={`space-y-4 text-left ${isPublishing ? 'opacity-50 pointer-events-none' : ''}`}>
-                <div className='space-y-2'>
-                  <label htmlFor='profile-name' className='text-sm font-medium'>
-                    Display Name
-                  </label>
-                  <Input
-                    id='profile-name'
-                    value={profileData.name}
-                    onChange={(e) => setProfileData(prev => ({ ...prev, name: e.target.value }))}
-                    placeholder='Your name'
-                    className='rounded-lg'
-                    disabled={isPublishing}
-                  />
-                </div>
-
-                <div className='space-y-2'>
-                  <label htmlFor='profile-about' className='text-sm font-medium'>
-                    Bio
-                  </label>
-                  <Textarea
-                    id='profile-about'
-                    value={profileData.about}
-                    onChange={(e) => setProfileData(prev => ({ ...prev, about: e.target.value }))}
-                    placeholder='Tell others about yourself...'
-                    className='rounded-lg resize-none'
-                    rows={3}
-                    disabled={isPublishing}
-                  />
-                </div>
-
-                <div className='space-y-2'>
+                {/* <div className='space-y-2'>
                   <label htmlFor='profile-picture' className='text-sm font-medium'>
                     Avatar
                   </label>
@@ -657,13 +715,137 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
                         <Upload className='w-4 h-4' />
                       )}
                     </Button>
-                  </div>
+                  </div> */}
                 </div>
-              </div>
+                <div className="space-y-8 mt-8">
+                      {!newAccount ? (
+                    <>
+                      <div className="space-y-6">
+                        <div className="space-y-3">
+                          <Label htmlFor="account-name" className="text-sm font-medium">Full Name</Label>
+                          <Input
+                            id="account-name"
+                            placeholder="Enter your full name"
+                            value={accountName}
+                            onChange={(e) => setAccountName(e.target.value)}
+                            className="h-12 rounded-xl border-border/50 bg-muted/30 focus:bg-background transition-colors"
+                          />
+                          <p className="text-xs text-muted-foreground">
+                            This will be associated with your healthcare identity
+                          </p>
+                        </div>
+
+                        <div className='space-y-2'>
+                            <label htmlFor='profile-about' className='text-sm font-medium'>
+                              Bio
+                            </label>
+                            <Textarea
+                              id='profile-about'
+                              value={profileData.about}
+                              onChange={(e) => setProfileData(prev => ({ ...prev, about: e.target.value }))}
+                              placeholder='Tell others about yourself...'
+                              className='rounded-lg resize-none'
+                              rows={3}
+                              disabled={isPublishing}
+                            />
+                          </div>
+
+                        <div className="space-y-4">
+                          <Label className="text-sm font-medium">Account Type</Label>
+                          <RadioGroup value={newAccountRole} onValueChange={(value) => setNewAccountRole(value as UserRole)} className="space-y-3">
+                            <div className="flex items-center space-x-3 p-4 rounded-xl border border-border/50 hover:bg-muted/30 transition-colors">
+                              <RadioGroupItem value="patient" id="new-patient" className="border-2" />
+                              <Label htmlFor="new-patient" className="flex-1 cursor-pointer">
+                                <div className="font-medium mb-1">Patient Account</div>
+                                <div className="text-sm text-muted-foreground">
+                                  Manage your personal health records
+                                </div>
+                              </Label>
+                            </div>
+                            <div className="flex items-center space-x-3 p-4 rounded-xl border border-border/50 hover:bg-muted/30 transition-colors">
+                              <RadioGroupItem value="clinician" id="new-clinician" className="border-2" />
+                              <Label htmlFor="new-clinician" className="flex-1 cursor-pointer">
+                                <div className="font-medium mb-1">Clinician Account</div>
+                                <div className="text-sm text-muted-foreground">
+                                  Access patient records with permission
+                                </div>
+                              </Label>
+                            </div>
+                          </RadioGroup>
+                        </div>
+
+                        <Button
+                          onClick={handleCreateAccount}
+                          disabled={!accountName.trim() || isCreating}
+                          className="w-full h-12 rounded-xl button-gradient font-medium"
+                        >
+                          {isCreating ? 'Creating Account...' : 'Create Nostr Healthcare ID'}
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="rounded-xl bg-gradient-to-r from-accent/10 to-accent/20 border border-accent/30 p-4">
+                        <div className="flex items-start space-x-3">
+                          <div className="flex-shrink-0 w-8 h-8 bg-accent/20 rounded-lg flex items-center justify-center">
+                            <CheckCircle className="h-4 w-4 text-accent" />
+                          </div>
+                          <div>
+                            <h4 className="font-medium text-accent-foreground mb-1">Account Created Successfully!</h4>
+                            <p className="text-sm text-accent-foreground/80">
+                              Your Nostr healthcare identity has been generated with secure cryptographic keys.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="space-y-6">
+                        <div className="space-y-3">
+                          <Label className="text-sm font-medium">Account Details</Label>
+                          <div className="p-4 bg-muted/50 rounded-xl border border-border/50 space-y-3">
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-muted-foreground">Name:</span>
+                              <span className="text-sm font-medium">{newAccount.name}</span>
+                            </div>
+                            <div className="flex items-center justify-between">
+                              <span className="text-sm font-medium text-muted-foreground">Role:</span>
+                              <span className="text-sm font-medium capitalize">{newAccount.role}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+                          <Label className="text-sm font-medium">Public Key (Healthcare ID)</Label>
+                          <div className="flex space-x-3">
+                            <Input
+                              value={newAccount.name}
+                              readOnly
+                              className="font-mono text-xs h-12 rounded-xl bg-muted/30"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="space-y-3">
+
+                        <div className="border-t border-border/50 pt-6">
+                          <div className="space-y-4">
+                            <Button
+                              onClick={handleUseNewAccount}
+                              className="w-full h-12 rounded-xl button-gradient font-medium"
+                            >
+                              Enter MediKey Dashboard
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>        
+                   </>
+                  )}
+                </div>
 
               {/* Action buttons */}
-              <div className='space-y-3'>
-                <Button
+               <div className='space-y-3'>
+                {/*<Button
                   className='w-full rounded-full py-4 text-base font-semibold bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 transform transition-all duration-200 hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none'
                   onClick={() => finishSignup(false)}
                   disabled={isPublishing || isUploading}
@@ -695,8 +877,8 @@ const SignupDialog: React.FC<SignupDialogProps> = ({ isOpen, onClose, onComplete
                   ) : (
                     'Skip for now'
                   )}
-                </Button>
-              </div>
+                </Button>*/}
+              </div> 
             </div>
           )}
         </div>

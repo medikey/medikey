@@ -1,22 +1,22 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useMediKey } from '@/contexts/MediKeyContext';
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Users, 
-  FileText, 
-  Share2, 
+import {
+  BarChart3,
+  TrendingUp,
+  Users,
+  FileText,
+  Share2,
   Zap,
   Activity,
   Calendar
 } from 'lucide-react';
-import { 
-  BarChart, 
-  Bar, 
-  XAxis, 
-  YAxis, 
-  CartesianGrid, 
-  Tooltip, 
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
   ResponsiveContainer,
   PieChart,
   Pie,
@@ -45,16 +45,16 @@ export function Analytics() {
     date: new Date(day.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })
   }));
 
-  // Colors for charts
-  const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+  // Colors for charts - earth tone palette
+  const colors = ['#D97706', '#059669', '#DC2626', '#7C2D12', '#92400E'];
 
   // Calculate additional metrics
-  const totalActivities = analytics.activityHistory.reduce((sum, day) => 
+  const totalActivities = analytics.activityHistory.reduce((sum, day) =>
     sum + day.uploads + day.shares + day.payments, 0
   );
 
   const activeShares = state.accessGrants.filter(grant => grant.isActive).length;
-  const uniqueConnections = isPatient 
+  const uniqueConnections = isPatient
     ? new Set(state.accessGrants.filter(g => g.isActive).map(g => g.clinicianId)).size
     : new Set(state.accessGrants.filter(g => g.clinicianId === state.currentUser?.publicKey && g.isActive).map(g => g.patientId)).size;
 
@@ -86,7 +86,7 @@ export function Analytics() {
         <Card>
           <CardContent className="p-6">
             <div className="flex items-center space-x-2">
-              <Share2 className="h-5 w-5 text-green-600" />
+              <Share2 className="h-5 w-5 text-accent" />
               <div>
                 <p className="text-sm font-medium text-muted-foreground">Active Shares</p>
                 <p className="text-2xl font-bold">{activeShares}</p>
@@ -180,28 +180,28 @@ export function Analytics() {
                   <XAxis dataKey="date" />
                   <YAxis />
                   <Tooltip />
-                  <Area 
-                    type="monotone" 
-                    dataKey="uploads" 
-                    stackId="1" 
-                    stroke="#3b82f6" 
-                    fill="#3b82f6" 
+                  <Area
+                    type="monotone"
+                    dataKey="uploads"
+                    stackId="1"
+                    stroke="#D97706"
+                    fill="#D97706"
                     fillOpacity={0.6}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="shares" 
-                    stackId="1" 
-                    stroke="#10b981" 
-                    fill="#10b981" 
+                  <Area
+                    type="monotone"
+                    dataKey="shares"
+                    stackId="1"
+                    stroke="#059669"
+                    fill="#059669"
                     fillOpacity={0.6}
                   />
-                  <Area 
-                    type="monotone" 
-                    dataKey="payments" 
-                    stackId="1" 
-                    stroke="#8b5cf6" 
-                    fill="#8b5cf6" 
+                  <Area
+                    type="monotone"
+                    dataKey="payments"
+                    stackId="1"
+                    stroke="#7C2D12"
+                    fill="#7C2D12"
                     fillOpacity={0.6}
                   />
                 </AreaChart>
@@ -231,9 +231,9 @@ export function Analytics() {
                 <XAxis dataKey="date" />
                 <YAxis />
                 <Tooltip />
-                <Bar dataKey="uploads" fill="#3b82f6" name="Uploads" />
-                <Bar dataKey="shares" fill="#10b981" name="Shares" />
-                <Bar dataKey="payments" fill="#8b5cf6" name="Payments" />
+                <Bar dataKey="uploads" fill="#D97706" name="Uploads" />
+                <Bar dataKey="shares" fill="#059669" name="Shares" />
+                <Bar dataKey="payments" fill="#7C2D12" name="Payments" />
               </BarChart>
             </ResponsiveContainer>
           )}
@@ -252,7 +252,7 @@ export function Analytics() {
           <div className="grid md:grid-cols-3 gap-6">
             <div className="space-y-2">
               <div className="flex items-center space-x-2">
-                <TrendingUp className="h-4 w-4 text-green-600" />
+                <TrendingUp className="h-4 w-4 text-accent" />
                 <span className="text-sm font-medium">Growth Metrics</span>
               </div>
               <div className="text-xs text-muted-foreground space-y-1">
@@ -282,7 +282,7 @@ export function Analytics() {
               <div className="text-xs text-muted-foreground space-y-1">
                 <div>Account Age: {state.currentUser ? 'New User' : 'N/A'}</div>
                 <div>Last Activity: {state.activityLog.length > 0 ? 'Recent' : 'None'}</div>
-                <div>Most Active Day: {activityTrendData.length > 0 ? activityTrendData.reduce((max, day) => 
+                <div>Most Active Day: {activityTrendData.length > 0 ? activityTrendData.reduce((max, day) =>
                   (day.uploads + day.shares + day.payments) > (max.uploads + max.shares + max.payments) ? day : max
                 ).date : 'N/A'}</div>
               </div>
